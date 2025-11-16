@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { Cell, GameState, GameStatus } from '../types/game.types';
 import { GameLevel } from '../types/game.types';
 import { generateGrid } from '../utils/gridGenerator';
-import { canMatch, isGameComplete } from '../utils/gameLogic';
+import { canMatch, isGameComplete, findHintPair } from '../utils/gameLogic';
 
 export function useGameEngine(level: GameLevel) {
   const [gameState, setGameState] = useState<GameState>(() => {
@@ -18,8 +18,13 @@ export function useGameEngine(level: GameLevel) {
     };
   });
   const [invalidMatchCellId, setInvalidMatchCellId] = useState<string | null>(null);
+  const [hintCells, setHintCells] = useState<{ cell1Id: string; cell2Id: string } | null>(null);
+  const [hintsUsed, setHintsUsed] = useState(0);
 
   const handleCellPress = useCallback((cell: Cell) => {
+    // Clear hint when any cell is pressed
+    setHintCells(null);
+    
     setGameState((prev) => {
       // Don't allow interaction if game is not playing
       if (prev.status !== 'playing') return prev;
@@ -101,7 +106,28 @@ export function useGameEngine(level: GameLevel) {
       visibleRows: level.initialVisibleRows,
       startTime: Date.now(),
     });
+    setHintsUsed(0);
+    setHintCells(null);
   }, [level]);
+
+  const showHint = useCallback(() => {
+    setGameState((prev) => {
+      if (prev.status !== 'playing') return prev;
+      
+      const hintPair = findHintPair(prev.grid, prev.visibleRows);
+      if (hintPair) {
+        setHintCells(hintPair);
+        setHintsUsed((prevHints) => prevHints + 1);
+        
+        // Clear hint after 3 seconds
+        setTimeout(() => {
+          setHintCells(null);
+        }, 3000);
+      }
+      
+      return prev;
+    });
+  }, []);
 
   const setGameStatus = useCallback((status: GameStatus) => {
     setGameState((prev) => ({ ...prev, status }));
@@ -114,6 +140,9 @@ export function useGameEngine(level: GameLevel) {
     resetGame,
     setGameStatus,
     invalidMatchCellId,
+    hintCells,
+    showHint,
+    hintsUsed,
   };
 }
 

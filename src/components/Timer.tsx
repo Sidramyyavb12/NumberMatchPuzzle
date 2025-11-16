@@ -12,7 +12,6 @@ export default function Timer({ timeLeft, formatTime }: TimerProps) {
 
   return (
     <View 
-      className="bg-blue-500 px-6 py-3 rounded-full"
       style={{
         backgroundColor: '#3B82F6',
         paddingHorizontal: 24,
@@ -21,13 +20,6 @@ export default function Timer({ timeLeft, formatTime }: TimerProps) {
       }}
     >
       <Text
-        className={`text-2xl font-bold ${
-          isCriticalTime
-            ? 'text-red-100'
-            : isLowTime
-            ? 'text-yellow-100'
-            : 'text-white'
-        }`}
         style={{
           fontSize: 20,
           fontWeight: 'bold',

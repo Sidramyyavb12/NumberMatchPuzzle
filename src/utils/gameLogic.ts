@@ -49,3 +49,34 @@ export function hasPossibleMatches(grid: Cell[][]): boolean {
   return false;
 }
 
+/**
+ * Find a valid matching pair in the grid
+ * Returns the IDs of two cells that can be matched, or null if no match exists
+ */
+export function findHintPair(grid: Cell[][], visibleRows: number): { cell1Id: string; cell2Id: string } | null {
+  const unmatchedCells: Cell[] = [];
+  
+  // Only check visible rows
+  for (let row = 0; row < Math.min(visibleRows, grid.length); row++) {
+    for (const cell of grid[row]) {
+      if (!cell.matched) {
+        unmatchedCells.push(cell);
+      }
+    }
+  }
+  
+  // Find first valid pair
+  for (let i = 0; i < unmatchedCells.length; i++) {
+    for (let j = i + 1; j < unmatchedCells.length; j++) {
+      if (canMatch(unmatchedCells[i], unmatchedCells[j])) {
+        return {
+          cell1Id: unmatchedCells[i].id,
+          cell2Id: unmatchedCells[j].id,
+        };
+      }
+    }
+  }
+  
+  return null;
+}
+

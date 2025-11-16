@@ -3,38 +3,53 @@ import { GameLevel } from '../types/game.types';
 
 /**
  * Generate a grid of numbers for the game
- * Ensures there are valid matches available
+ * Ensures ALL cells have valid matches (guaranteed solvable)
  */
 export function generateGrid(level: GameLevel): Cell[][] {
   const grid: Cell[][] = [];
   const totalCells = level.rows * level.cols;
   
-  // Generate numbers (1-9) ensuring pairs that can match
-  const numbers: number[] = [];
+  // Ensure even number of cells for pairing
+  const pairsNeeded = Math.floor(totalCells / 2);
   
-  // Add pairs that sum to 10
-  const pairs = [
-    [1, 9], [2, 8], [3, 7], [4, 6], [5, 5],
-    [1, 9], [2, 8], [3, 7], [4, 6],
-  ];
+  // Generate guaranteed matching pairs
+  // Strategy: More equal pairs (easier) and some sum-to-10 pairs
+  const pairs: number[][] = [];
   
-  // Add equal pairs
-  for (let i = 1; i <= 9; i++) {
-    pairs.push([i, i]);
+  // Prefer equal pairs for easier matching (70% equal, 30% sum-to-10)
+  for (let i = 0; i < pairsNeeded; i++) {
+    if (i % 10 < 7) {
+      // Equal pairs (easier to spot) - 70% of pairs
+      const num = ((i * 2) % 9) + 1; // Cycle through 1-9
+      pairs.push([num, num]);
+    } else {
+      // Sum to 10 pairs - 30% of pairs
+      const sumPairs = [[1, 9], [2, 8], [3, 7], [4, 6], [5, 5]];
+      const pair = sumPairs[i % sumPairs.length];
+      pairs.push([pair[0], pair[1]]);
+    }
   }
   
-  // Flatten and shuffle
+  // Flatten pairs into single array
   const flatNumbers: number[] = [];
   pairs.forEach(pair => {
     flatNumbers.push(...pair);
   });
   
-  // Fill remaining cells with random numbers
-  while (flatNumbers.length < totalCells) {
-    flatNumbers.push(Math.floor(Math.random() * 9) + 1);
+  // If odd number of cells, add one more number with its match
+  if (totalCells % 2 === 1) {
+    const extraNum = Math.floor(Math.random() * 9) + 1;
+    flatNumbers.push(extraNum);
+    // Find a match for it
+    const matchNum = Math.random() > 0.5 ? extraNum : (10 - extraNum);
+    if (matchNum >= 1 && matchNum <= 9) {
+      flatNumbers.push(matchNum);
+    } else {
+      flatNumbers.push(extraNum); // Fallback to equal pair
+    }
   }
   
-  // Shuffle array
+  // Shuffle array to randomize positions
   shuffleArray(flatNumbers);
   
   // Create grid
@@ -43,15 +58,19 @@ export function generateGrid(level: GameLevel): Cell[][] {
     const rowCells: Cell[] = [];
     for (let col = 0; col < level.cols; col++) {
       const index = row * level.cols + col;
-      rowCells.push({
-        id: `cell-${idCounter++}`,
-        value: flatNumbers[index] || Math.floor(Math.random() * 9) + 1,
-        matched: false,
-        row,
-        col,
-      });
+      if (index < flatNumbers.length) {
+        rowCells.push({
+          id: `cell-${idCounter++}`,
+          value: flatNumbers[index],
+          matched: false,
+          row,
+          col,
+        });
+      }
     }
-    grid.push(rowCells);
+    if (rowCells.length > 0) {
+      grid.push(rowCells);
+    }
   }
   
   return grid;

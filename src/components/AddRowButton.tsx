@@ -18,9 +18,6 @@ export default function AddRowButton({
     <Pressable
       onPress={onPress}
       disabled={disabled}
-      className={`px-6 py-3 rounded-full ${
-        disabled ? 'bg-gray-300' : 'bg-green-500'
-      }`}
       style={{
         paddingHorizontal: 24,
         paddingVertical: 12,
@@ -29,7 +26,6 @@ export default function AddRowButton({
       }}
     >
       <Text 
-        className="text-white text-lg font-bold text-center"
         style={{
           color: '#FFFFFF',
           fontSize: 18,

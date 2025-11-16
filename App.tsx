@@ -11,6 +11,7 @@ import { LEVELS } from './src/constants/levels';
 import Grid from './src/components/Grid';
 import Timer from './src/components/Timer';
 import AddRowButton from './src/components/AddRowButton';
+import HintButton from './src/components/HintButton';
 import LevelIndicator from './src/components/LevelIndicator';
 import GameOverModal from './src/components/GameOverModal';
 
@@ -25,6 +26,9 @@ export default function App() {
     resetGame,
     setGameStatus,
     invalidMatchCellId,
+    hintCells,
+    showHint,
+    hintsUsed,
   } = useGameEngine(currentLevel);
 
   const handleTimeUp = () => {
@@ -73,13 +77,12 @@ export default function App() {
 
   return (
     <SafeAreaView 
-      className="flex-1 bg-blue-50"
       style={{ flex: 1, backgroundColor: '#EFF6FF' }}
     >
       <StatusBar barStyle="dark-content" />
       
       {/* Header */}
-      <View className="px-4 pt-4 pb-2" style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}>
+      <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}>
         <LevelIndicator
           level={currentLevel}
           matchedPairs={gameState.matchedPairs}
@@ -87,29 +90,42 @@ export default function App() {
       </View>
 
       {/* Timer */}
-      <View className="items-center my-4" style={{ alignItems: 'center', marginVertical: 16 }}>
+      <View style={{ alignItems: 'center', marginVertical: 16 }}>
         <Timer timeLeft={timeLeft} formatTime={formatTime} />
       </View>
 
       {/* Game Grid */}
-      <View className="flex-1" style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
         <Grid
           grid={gameState.grid}
           visibleRows={gameState.visibleRows}
           selectedCell={gameState.selectedCell}
           onCellPress={handleCellPress}
           invalidMatchCellId={invalidMatchCellId}
+          hintCells={hintCells}
         />
       </View>
 
-      {/* Add Row Button */}
-      <View className="px-4 pb-4" style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
-        <AddRowButton
-          onPress={addRow}
-          disabled={!canAddRow}
-          currentRows={gameState.visibleRows}
-          maxRows={currentLevel.maxRows}
-        />
+      {/* Action Buttons */}
+      <View style={{ paddingHorizontal: 16, paddingBottom: 16, gap: 12 }}>
+        <View style={{ flexDirection: 'row', gap: 12 }}>
+          <View style={{ flex: 1 }}>
+            <HintButton
+              onPress={showHint}
+              disabled={gameState.status !== 'playing'}
+              hintsUsed={hintsUsed}
+              maxHints={5}
+            />
+          </View>
+          <View style={{ flex: 1 }}>
+            <AddRowButton
+              onPress={addRow}
+              disabled={!canAddRow}
+              currentRows={gameState.visibleRows}
+              maxRows={currentLevel.maxRows}
+            />
+          </View>
+        </View>
       </View>
 
       {/* Game Over Modal */}
@@ -122,8 +138,8 @@ export default function App() {
       />
 
       {/* Instructions */}
-      <View className="px-4 pb-2" style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
-        <Text className="text-gray-600 text-xs text-center" style={{ color: '#4B5563', fontSize: 12, textAlign: 'center' }}>
+      <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
+        <Text style={{ color: '#4B5563', fontSize: 12, textAlign: 'center' }}>
           💡 Match numbers that are equal or sum to 10
         </Text>
       </View>

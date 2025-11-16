@@ -30,7 +30,6 @@ export default function GameOverModal({
       onRequestClose={onRestart}
     >
       <View 
-        className="flex-1 bg-black/50 items-center justify-center px-4"
         style={{
           flex: 1,
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -40,7 +39,6 @@ export default function GameOverModal({
         }}
       >
         <View 
-          className="bg-white rounded-2xl p-6 w-full max-w-sm"
           style={{
             backgroundColor: '#FFFFFF',
             borderRadius: 16,
@@ -50,9 +48,6 @@ export default function GameOverModal({
           }}
         >
           <Text
-            className={`text-3xl font-bold text-center mb-4 ${
-              isWon ? 'text-green-500' : 'text-red-500'
-            }`}
             style={{
               fontSize: 30,
               fontWeight: 'bold',
@@ -65,7 +60,6 @@ export default function GameOverModal({
           </Text>
 
           <Text 
-            className="text-gray-700 text-center mb-6 text-lg"
             style={{
               color: '#374151',
               textAlign: 'center',
@@ -79,13 +73,11 @@ export default function GameOverModal({
           </Text>
 
           <View 
-            className="space-y-3"
             style={{}}
           >
             {isWon && hasNextLevel && onNextLevel && (
               <Pressable
                 onPress={onNextLevel}
-                className="bg-green-500 py-4 rounded-xl"
                 style={{
                   backgroundColor: '#22C55E',
                   paddingVertical: 16,
@@ -94,7 +86,6 @@ export default function GameOverModal({
                 }}
               >
                 <Text 
-                  className="text-white text-center text-lg font-bold"
                   style={{
                     color: '#FFFFFF',
                     textAlign: 'center',
@@ -109,9 +100,6 @@ export default function GameOverModal({
 
             <Pressable
               onPress={onRestart}
-              className={`py-4 rounded-xl ${
-                isWon && hasNextLevel ? 'bg-gray-300' : 'bg-blue-500'
-              }`}
               style={{
                 paddingVertical: 16,
                 borderRadius: 12,
@@ -119,9 +107,6 @@ export default function GameOverModal({
               }}
             >
               <Text
-                className={`text-center text-lg font-bold ${
-                  isWon && hasNextLevel ? 'text-gray-700' : 'text-white'
-                }`}
                 style={{
                   textAlign: 'center',
                   fontSize: 18,

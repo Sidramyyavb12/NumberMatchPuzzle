@@ -4,10 +4,10 @@ export const LEVELS: GameLevel[] = [
   {
     id: 1,
     name: 'Level 1 - Easy',
-    rows: 6,
-    cols: 5,
+    rows: 4,
+    cols: 4,
     initialVisibleRows: 3,
-    maxRows: 6,
+    maxRows: 4,
     timeLimit: 120, // 2 minutes
     description: 'Match numbers that are equal or sum to 10',
   },

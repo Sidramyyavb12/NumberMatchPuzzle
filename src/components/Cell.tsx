@@ -2,19 +2,21 @@ import React, { useEffect, useRef } from 'react';
 import { Pressable, Text, View, Animated } from 'react-native';
 import { Cell as CellType } from '../types/game.types';
 import { GAME_CONFIG } from '../constants/levels';
-import { createShakeAnimation, createFadeAnimation } from '../utils/animations';
+import { createShakeAnimation, createFadeAnimation, createPulseAnimation } from '../utils/animations';
 
 interface CellProps {
   cell: CellType;
   selected: boolean;
   onPress: (cell: CellType) => void;
   invalidMatch?: boolean;
+  isHinted?: boolean;
 }
 
-export default function Cell({ cell, selected, onPress, invalidMatch = false }: CellProps) {
+export default function Cell({ cell, selected, onPress, invalidMatch = false, isHinted = false }: CellProps) {
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const shakeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     if (cell.matched) {
@@ -32,45 +34,39 @@ export default function Cell({ cell, selected, onPress, invalidMatch = false }: 
     }
   }, [invalidMatch, shakeAnim]);
 
+  useEffect(() => {
+    if (isHinted) {
+      const pulse = createPulseAnimation(pulseAnim);
+      pulse.start();
+      return () => {
+        pulse.stop();
+        pulseAnim.setValue(1);
+      };
+    } else {
+      pulseAnim.setValue(1);
+    }
+  }, [isHinted, pulseAnim]);
+
   const handlePressIn = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 0.9,
-      useNativeDriver: true,
-      tension: 300,
-      friction: 10,
-    }).start();
+    if (!isHinted) {
+      Animated.spring(scaleAnim, {
+        toValue: 0.9,
+        useNativeDriver: true,
+        tension: 300,
+        friction: 10,
+      }).start();
+    }
   };
 
   const handlePressOut = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-      tension: 300,
-      friction: 10,
-    }).start();
-  };
-
-  const getCellStyle = () => {
-    if (cell.matched) {
-      return 'bg-gray-300 border-gray-400';
+    if (!isHinted) {
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        useNativeDriver: true,
+        tension: 300,
+        friction: 10,
+      }).start();
     }
-    if (selected) {
-      return 'bg-yellow-300 border-yellow-500';
-    }
-    if (invalidMatch) {
-      return 'bg-red-100 border-red-400';
-    }
-    return 'bg-white border-gray-300';
-  };
-
-  const getTextStyle = () => {
-    if (cell.matched) {
-      return 'text-gray-500';
-    }
-    if (selected) {
-      return 'text-yellow-900 font-bold';
-    }
-    return 'text-gray-900';
   };
 
   return (
@@ -78,7 +74,7 @@ export default function Cell({ cell, selected, onPress, invalidMatch = false }: 
       style={{
         transform: [
           { translateX: shakeAnim },
-          { scale: scaleAnim },
+          { scale: isHinted ? pulseAnim : scaleAnim },
         ],
         opacity: fadeAnim,
       }}
@@ -95,15 +91,16 @@ export default function Cell({ cell, selected, onPress, invalidMatch = false }: 
         }}
       >
         <View
-          className={`flex-1 rounded-xl border-2 items-center justify-center ${getCellStyle()}`}
           style={{
             flex: 1,
             borderRadius: 12,
-            borderWidth: 2,
+            borderWidth: isHinted ? 3 : 2,
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: cell.matched 
               ? '#D1D5DB' 
+              : isHinted
+              ? '#DBEAFE'
               : selected 
               ? '#FDE047' 
               : invalidMatch 
@@ -111,15 +108,21 @@ export default function Cell({ cell, selected, onPress, invalidMatch = false }: 
               : '#FFFFFF',
             borderColor: cell.matched 
               ? '#9CA3AF' 
+              : isHinted
+              ? '#3B82F6'
               : selected 
               ? '#EAB308' 
               : invalidMatch 
               ? '#F87171' 
               : '#D1D5DB',
+            shadowColor: isHinted ? '#3B82F6' : undefined,
+            shadowOffset: isHinted ? { width: 0, height: 0 } : undefined,
+            shadowOpacity: isHinted ? 0.8 : undefined,
+            shadowRadius: isHinted ? 8 : undefined,
+            elevation: isHinted ? 8 : 0,
           }}
         >
           <Text 
-            className={`text-2xl font-bold ${getTextStyle()}`}
             style={{
               fontSize: 24,
               fontWeight: 'bold',

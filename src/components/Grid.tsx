@@ -9,6 +9,7 @@ interface GridProps {
   selectedCell: CellType | null;
   onCellPress: (cell: CellType) => void;
   invalidMatchCellId: string | null;
+  hintCells?: { cell1Id: string; cell2Id: string } | null;
 }
 
 export default function Grid({
@@ -17,12 +18,13 @@ export default function Grid({
   selectedCell,
   onCellPress,
   invalidMatchCellId,
+  hintCells,
 }: GridProps) {
   const visibleGrid = grid.slice(0, visibleRows);
 
   return (
     <ScrollView
-      className="flex-1"
+      style={{ flex: 1 }}
       contentContainerStyle={{ paddingBottom: 20 }}
       showsVerticalScrollIndicator={false}
     >
@@ -30,7 +32,6 @@ export default function Grid({
         {visibleGrid.map((row, rowIndex) => (
           <View 
             key={rowIndex} 
-            className="flex-row justify-center"
             style={{ flexDirection: 'row', justifyContent: 'center' }}
           >
             {row.map((cell) => (
@@ -40,6 +41,7 @@ export default function Grid({
                 selected={selectedCell?.id === cell.id}
                 onPress={onCellPress}
                 invalidMatch={invalidMatchCellId === cell.id}
+                isHinted={hintCells ? (cell.id === hintCells.cell1Id || cell.id === hintCells.cell2Id) : false}
               />
             ))}
           </View>

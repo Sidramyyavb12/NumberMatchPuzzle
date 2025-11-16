@@ -51,3 +51,23 @@ export function createScaleAnimation(animatedValue: Animated.Value, scale: numbe
   });
 }
 
+/**
+ * Create pulsing animation for hint cells
+ */
+export function createPulseAnimation(animatedValue: Animated.Value) {
+  return Animated.loop(
+    Animated.sequence([
+      Animated.timing(animatedValue, {
+        toValue: 1.1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(animatedValue, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ])
+  );
+}
+
