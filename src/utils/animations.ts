@@ -52,19 +52,21 @@ export function createScaleAnimation(animatedValue: Animated.Value, scale: numbe
 }
 
 /**
- * Create pulsing animation for hint cells
+ * Create pulsing animation for hint cells (more playful cartoon style)
  */
 export function createPulseAnimation(animatedValue: Animated.Value) {
   return Animated.loop(
     Animated.sequence([
-      Animated.timing(animatedValue, {
-        toValue: 1.1,
-        duration: 500,
+      Animated.spring(animatedValue, {
+        toValue: 1.15,
+        tension: 100,
+        friction: 3,
         useNativeDriver: true,
       }),
-      Animated.timing(animatedValue, {
+      Animated.spring(animatedValue, {
         toValue: 1,
-        duration: 500,
+        tension: 100,
+        friction: 3,
         useNativeDriver: true,
       }),
     ])

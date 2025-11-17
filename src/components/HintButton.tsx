@@ -22,20 +22,28 @@ export default function HintButton({
       disabled={!canUseHint}
       style={{
         paddingHorizontal: 20,
-        paddingVertical: 10,
-        borderRadius: 9999,
-        backgroundColor: canUseHint ? '#3B82F6' : '#9CA3AF',
-        borderWidth: 2,
-        borderColor: canUseHint ? '#2563EB' : '#6B7280',
+        paddingVertical: 12,
+        borderRadius: 20,
+        backgroundColor: canUseHint ? '#81C784' : '#BDBDBD',
+        borderWidth: 3,
+        borderColor: canUseHint ? '#4CAF50' : '#757575',
+        shadowColor: canUseHint ? '#4CAF50' : '#757575',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 6,
+        elevation: canUseHint ? 6 : 2,
       }}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-        <Text style={{ fontSize: 18 }}>💡</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+        <Text style={{ fontSize: 22 }}>💡</Text>
         <Text 
           style={{
             color: '#FFFFFF',
             fontSize: 16,
-            fontWeight: 'bold',
+            fontWeight: '900',
+            textShadowColor: '#2E7D32',
+            textShadowOffset: { width: 1, height: 1 },
+            textShadowRadius: 1,
           }}
         >
           Hint {hintsUsed}/{maxHints}

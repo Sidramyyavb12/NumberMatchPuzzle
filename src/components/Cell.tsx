@@ -50,10 +50,10 @@ export default function Cell({ cell, selected, onPress, invalidMatch = false, is
   const handlePressIn = () => {
     if (!isHinted) {
       Animated.spring(scaleAnim, {
-        toValue: 0.9,
+        toValue: 0.85,
         useNativeDriver: true,
-        tension: 300,
-        friction: 10,
+        tension: 200,
+        friction: 5,
       }).start();
     }
   };
@@ -63,8 +63,8 @@ export default function Cell({ cell, selected, onPress, invalidMatch = false, is
       Animated.spring(scaleAnim, {
         toValue: 1,
         useNativeDriver: true,
-        tension: 300,
-        friction: 10,
+        tension: 200,
+        friction: 5,
       }).start();
     }
   };
@@ -93,44 +93,46 @@ export default function Cell({ cell, selected, onPress, invalidMatch = false, is
         <View
           style={{
             flex: 1,
-            borderRadius: 12,
-            borderWidth: isHinted ? 3 : 2,
+            borderRadius: 20,
+            borderWidth: isHinted ? 4 : 3,
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: cell.matched 
-              ? '#D1D5DB' 
+              ? '#C8E6C9' 
               : isHinted
-              ? '#DBEAFE'
+              ? '#A5D6A7'
               : selected 
-              ? '#FDE047' 
+              ? '#FFD54F' 
               : invalidMatch 
-              ? '#FEE2E2' 
+              ? '#FFCDD2' 
               : '#FFFFFF',
             borderColor: cell.matched 
-              ? '#9CA3AF' 
+              ? '#81C784' 
               : isHinted
-              ? '#3B82F6'
+              ? '#4CAF50'
               : selected 
-              ? '#EAB308' 
+              ? '#FFC107' 
               : invalidMatch 
-              ? '#F87171' 
-              : '#D1D5DB',
-            shadowColor: isHinted ? '#3B82F6' : undefined,
-            shadowOffset: isHinted ? { width: 0, height: 0 } : undefined,
-            shadowOpacity: isHinted ? 0.8 : undefined,
-            shadowRadius: isHinted ? 8 : undefined,
-            elevation: isHinted ? 8 : 0,
+              ? '#F44336' 
+              : '#66BB6A',
+            shadowColor: isHinted ? '#4CAF50' : selected ? '#FFC107' : '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: isHinted ? 0.6 : selected ? 0.3 : 0.2,
+            shadowRadius: isHinted ? 12 : 6,
+            elevation: isHinted ? 8 : selected ? 4 : 2,
           }}
         >
           <Text 
             style={{
-              fontSize: 24,
-              fontWeight: 'bold',
+              fontSize: 28,
+              fontWeight: '900',
               color: cell.matched 
-                ? '#6B7280' 
+                ? '#66BB6A' 
                 : selected 
-                ? '#713F12' 
-                : '#111827',
+                ? '#F57C00' 
+                : isHinted
+                ? '#1B5E20'
+                : '#2E7D32',
             }}
           >
             {cell.value}

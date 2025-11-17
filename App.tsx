@@ -77,7 +77,7 @@ export default function App() {
 
   return (
     <SafeAreaView 
-      style={{ flex: 1, backgroundColor: '#EFF6FF' }}
+      style={{ flex: 1, backgroundColor: '#E8F5E9' }}
     >
       <StatusBar barStyle="dark-content" />
       
@@ -138,8 +138,23 @@ export default function App() {
       />
 
       {/* Instructions */}
-      <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
-        <Text style={{ color: '#4B5563', fontSize: 12, textAlign: 'center' }}>
+      <View style={{ 
+        paddingHorizontal: 16, 
+        paddingBottom: 8,
+        paddingTop: 8,
+        backgroundColor: '#C8E6C9',
+        marginHorizontal: 16,
+        marginBottom: 8,
+        borderRadius: 15,
+        borderWidth: 2,
+        borderColor: '#81C784',
+      }}>
+        <Text style={{ 
+          color: '#1B5E20', 
+          fontSize: 14, 
+          textAlign: 'center',
+          fontWeight: '700',
+        }}>
           💡 Match numbers that are equal or sum to 10
         </Text>
       </View>

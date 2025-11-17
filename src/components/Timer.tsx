@@ -13,17 +13,27 @@ export default function Timer({ timeLeft, formatTime }: TimerProps) {
   return (
     <View 
       style={{
-        backgroundColor: '#3B82F6',
-        paddingHorizontal: 24,
-        paddingVertical: 12,
-        borderRadius: 9999,
+        backgroundColor: isCriticalTime ? '#F44336' : isLowTime ? '#FF9800' : '#66BB6A',
+        paddingHorizontal: 28,
+        paddingVertical: 14,
+        borderRadius: 25,
+        borderWidth: 3,
+        borderColor: isCriticalTime ? '#C62828' : isLowTime ? '#F57C00' : '#4CAF50',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 8,
+        elevation: 8,
       }}
     >
       <Text
         style={{
-          fontSize: 20,
-          fontWeight: 'bold',
-          color: isCriticalTime ? '#FEE2E2' : isLowTime ? '#FEF3C7' : '#FFFFFF',
+          fontSize: 24,
+          fontWeight: '900',
+          color: '#FFFFFF',
+          textShadowColor: '#000',
+          textShadowOffset: { width: 1, height: 1 },
+          textShadowRadius: 2,
         }}
       >
         ⏱️ {formatTime(timeLeft)}
