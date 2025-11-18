@@ -1,7 +1,8 @@
 # Number Match Puzzle Game
 
 A React Native puzzle game where players match numbers that are equal or sum to 10. Built with Expo, TypeScript, and NativeWind (Tailwind CSS).
-
+## 🎮 Game APk
+https://expo.dev/accounts/sidduvb/projects/NumberMatchPuzzle/builds/620ca3b6-d8f9-4142-8ba7-6c963dd2c31e
 ## 🎮 Game Overview
 
 This is a number-matching puzzle game similar to "Number Master" by KiwiFun. Players must match pairs of numbers by tapping two cells that either:
