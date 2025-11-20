@@ -21,6 +21,7 @@ export default function App() {
 
   const {
     gameState,
+    score,          // ⬅️ ADDED
     handleCellPress,
     addRow,
     resetGame,
@@ -68,7 +69,6 @@ export default function App() {
       reset(currentLevel.timeLimit);
       start();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLevelIndex]);
 
   const canAddRow =
@@ -82,11 +82,42 @@ export default function App() {
       <StatusBar barStyle="dark-content" />
       
       {/* Header */}
-      <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}>
+      <View style={{ 
+        paddingHorizontal: 16, 
+        paddingTop: 16, 
+        paddingBottom: 8,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        
         <LevelIndicator
           level={currentLevel}
           matchedPairs={gameState.matchedPairs}
         />
+
+        {/* ⬇️ NEW SCORE UI */}
+        <View 
+          style={{
+            backgroundColor: '#C8E6C9',
+            paddingVertical: 6,
+            paddingHorizontal: 14,
+            borderRadius: 12,
+            borderWidth: 2,
+            borderColor: '#81C784'
+          }}
+        >
+          <Text 
+            style={{
+              fontSize: 16,
+              fontWeight: '700',
+              color: '#1B5E20'
+            }}
+          >
+            Score: {score}
+          </Text>
+        </View>
+
       </View>
 
       {/* Timer */}

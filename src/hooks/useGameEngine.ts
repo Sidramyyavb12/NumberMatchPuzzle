@@ -3,8 +3,15 @@ import { Cell, GameState, GameStatus } from '../types/game.types';
 import { GameLevel } from '../types/game.types';
 import { generateGrid } from '../utils/gridGenerator';
 import { canMatch, isGameComplete, findHintPair } from '../utils/gameLogic';
+import { useScore } from '../hooks/useScore';
 
 export function useGameEngine(level: GameLevel) {
+  // ⬇️ NEW Modular Score System
+  const { value: score, addMatch, reset: resetScore } = useScore({
+    base: 10,
+    comboMultiplier: 0.2,
+  });
+
   const [gameState, setGameState] = useState<GameState>(() => {
     const grid = generateGrid(level);
     return {
@@ -17,40 +24,30 @@ export function useGameEngine(level: GameLevel) {
       startTime: Date.now(),
     };
   });
+
   const [invalidMatchCellId, setInvalidMatchCellId] = useState<string | null>(null);
   const [hintCells, setHintCells] = useState<{ cell1Id: string; cell2Id: string } | null>(null);
   const [hintsUsed, setHintsUsed] = useState(0);
 
   const handleCellPress = useCallback((cell: Cell) => {
-    // Clear hint when any cell is pressed
     setHintCells(null);
-    
-    setGameState((prev) => {
-      // Don't allow interaction if game is not playing
-      if (prev.status !== 'playing') return prev;
 
-      // Don't allow clicking matched cells
+    setGameState((prev) => {
+      if (prev.status !== 'playing') return prev;
       if (cell.matched) return prev;
 
-      // If no cell is selected, select this one
+      // First selection
       if (!prev.selectedCell) {
-        return {
-          ...prev,
-          selectedCell: cell,
-        };
+        return { ...prev, selectedCell: cell };
       }
 
-      // If clicking the same cell, deselect it
+      // Clicking same cell again cancels selection
       if (prev.selectedCell.id === cell.id) {
-        return {
-          ...prev,
-          selectedCell: null,
-        };
+        return { ...prev, selectedCell: null };
       }
 
-      // Check if cells can match
+      // MATCH FOUND
       if (canMatch(prev.selectedCell, cell)) {
-        // Create new grid with matched cells
         const newGrid = prev.grid.map((row) =>
           row.map((c) => {
             if (c.id === prev.selectedCell!.id || c.id === cell.id) {
@@ -60,7 +57,9 @@ export function useGameEngine(level: GameLevel) {
           })
         );
 
-        // Check if game is complete
+        // ⬇️ NEW SCORING (Modular)
+        addMatch();
+
         const completed = isGameComplete(newGrid);
 
         return {
@@ -70,16 +69,13 @@ export function useGameEngine(level: GameLevel) {
           matchedPairs: prev.matchedPairs + 1,
           status: completed ? 'won' : prev.status,
         };
-      } else {
-        // Invalid match - trigger animation
-        setInvalidMatchCellId(cell.id);
-        setTimeout(() => setInvalidMatchCellId(null), 500);
-        
-        return {
-          ...prev,
-          selectedCell: null,
-        };
       }
+
+      // ❌ INVALID MATCH
+      setInvalidMatchCellId(cell.id);
+      setTimeout(() => setInvalidMatchCellId(null), 500);
+
+      return { ...prev, selectedCell: null };
     });
   }, []);
 
@@ -97,6 +93,10 @@ export function useGameEngine(level: GameLevel) {
 
   const resetGame = useCallback(() => {
     const grid = generateGrid(level);
+
+    // ⬇️ Reset modular score manager
+    resetScore();
+
     setGameState({
       level: level.id,
       grid,
@@ -106,6 +106,7 @@ export function useGameEngine(level: GameLevel) {
       visibleRows: level.initialVisibleRows,
       startTime: Date.now(),
     });
+
     setHintsUsed(0);
     setHintCells(null);
   }, [level]);
@@ -113,18 +114,16 @@ export function useGameEngine(level: GameLevel) {
   const showHint = useCallback(() => {
     setGameState((prev) => {
       if (prev.status !== 'playing') return prev;
-      
+
       const hintPair = findHintPair(prev.grid, prev.visibleRows);
       if (hintPair) {
         setHintCells(hintPair);
         setHintsUsed((prevHints) => prevHints + 1);
-        
-        // Clear hint after 3 seconds
+
         setTimeout(() => {
           setHintCells(null);
         }, 3000);
       }
-      
       return prev;
     });
   }, []);
@@ -135,6 +134,7 @@ export function useGameEngine(level: GameLevel) {
 
   return {
     gameState,
+    score,
     handleCellPress,
     addRow,
     resetGame,
@@ -145,4 +145,3 @@ export function useGameEngine(level: GameLevel) {
     hintsUsed,
   };
 }
-
